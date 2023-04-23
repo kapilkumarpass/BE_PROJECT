@@ -1,0 +1,62 @@
+{% extends 'base.html'%}
+{% block content %}
+<style>
+    .headeritem{
+        color:white;
+    }
+</style>
+<nav class="navbar navbar-expand-sm navbar-light bg-dark">
+    <a class="navbar-brand" href="#" style="color:white">Navbar</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+  
+    <div class="collapse navbar-collapse mynav" id="navbarTogglerDemo02">
+      <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+        <li class="nav-item">
+          <a class="nav-link headeritem" href="#" onclick="()=>{this.style.color = 'red';}" >Home</a>
+         
+        </li>
+        <li class="nav-item" >
+          <a class="nav-link headeritem" href="{% url 'showuser' %}" >video</a>
+        </li>
+        <li class="nav-item" >
+          <a class="nav-link headeritem" href="{% url 'signout' %}" >logout</a>
+        </li>
+        {% comment %} <li class="nav-item">
+          <a class="nav-link disabled" href="#">Disabled</a>
+        </li>  {% endcomment %}
+      </ul>
+      <form class="form-inline my-2 my-lg-0" style="display:flex; margin:3rem">
+        <input class="form-control mr-sm-2" type="search" placeholder="Search">
+        <button class="btn btn-outline-success my-2 my-sm-0 mx-2" type="submit">Search</button>
+      </form>
+    </div>
+  </nav>
+  <h3>past listen songs</h3>
+  <table class="table" style="margin-top:20px">
+    <thead>
+      <tr>
+        
+        <th scope="col">song name</th>
+        <th scope="col">song url</th>
+        
+      </tr>
+    </thead>
+    <tbody>
+        {% for i in songs %}
+        {% comment %} {% print(type(i))%} {% endcomment %}
+         
+      <tr>
+        
+        <td>{{i.1}}</td>
+        <td><a href={{i.0}} style="color:green">{{i.0}}</a></td>
+        
+      </tr>
+      {% endfor %}
+      
+    </tbody>
+  </table>
+
+  
+{% endblock %}

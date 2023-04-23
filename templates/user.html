@@ -1,0 +1,10 @@
+{% extends 'base.html'%}
+{%block content%}
+<h1>before camera open</h1>
+
+<div style="width: 400px; height: 400px;">
+    <p id="wait" ></p>
+    <img id="loadimage" src = "{% url 'emotion_detector' %}">
+    <h1 id="real"></h1>
+</div>
+{%endblock%}
