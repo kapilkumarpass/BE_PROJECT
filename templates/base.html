@@ -20,15 +20,45 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     
     <link href="{% static '/css/first.css' %}" rel="stylesheet">  
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    {% comment %} <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" integrity="sha512-fD9DI5bZwQxOi7MhYWnnNPlvXdp/2Pj3XSTRrFs5FQa4mizyGLnJcN6tuvUS6LbmgN1ut+XGSABKvjN0H6Aoow==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> {% endcomment %}
+    {% comment %} <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> {% endcomment %}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
 
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700;900&display=swap" rel="stylesheet">
+    
+    
+    {% comment %} <link href="{% static 'css/bootstrap-icons.css' %}" rel="stylesheet"> {% endcomment %}
+
+    {% comment %} <link rel="stylesheet" href="{% static 'css/magnific-popup.css' %}"> {% endcomment %}
+
+    {% comment %} <link href="{% static 'css/aos.css' %}" rel="stylesheet"> {% endcomment %}
+
+    {% comment %} <link href="{% static 'css/templatemo-nomad-force.css' %}" rel="stylesheet"> {% endcomment %}
 </head>
-<body style="background-color:rgb(192, 160, 0)">
+<body style="position: relative;
+height: 100%;
+margin: 0;
+padding: 0;
+background-repeat: no-repeat;
+background-size: cover;
+">
     {% block content %}
     
     
     {% comment %} <button onclick="myfunction()">open camera</button> {% endcomment %}
     {% endblock  %}
     <script src="{% static '/first.js' %}" type="text/javascript"></script>
+    {% comment %} <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" integrity="sha512-fD9DI5bZwQxOi7MhYWnnNPlvXdp/2Pj3XSTRrFs5FQa4mizyGLnJcN6tuvUS6LbmgN1ut+XGSABKvjN0H6Aoow==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> {% endcomment %}
+    {% comment %} <script src="{% static 'js/jquery.min.js' %}"></script> {% endcomment %}
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    {% comment %} <script src="{% static 'js/jquery.sticky.js' %}"></script>
+    <script src="{% static 'js/aos.js' %}"></script>
+    <script src="{% static 'js/jquery.magnific-popup.min.js' %}"></script>
+    <script src="{% static 'js/magnific-popup-options.js' %}"></script>
+    <script src="{% static 'js/scrollspy.min.js' %}"></script>
+    <script src="{% static 'js/custom.js' %}"></script>  {% endcomment %}
 </body>
 </html>

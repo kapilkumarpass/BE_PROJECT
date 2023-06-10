@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+<link href="{% static 'css/bootstrap-icons.css' %}" rel="stylesheet">
+
+    <link rel="stylesheet" href="{% static 'css/magnific-popup.css' %}">
+
+    <link href="{% static 'css/aos.css' %}" rel="stylesheet">
+
+    <link href="{% static 'css/templatemo-nomad-force.css' %}" rel="stylesheet">
+        
+    <main>
+
+            <section class="hero" id="hero">
+                <div class="heroText">
+                    <h1 class="news-detail-title text-white mt-lg-5 mb-lg-4" data-aos="zoom-in" data-aos-delay="300">
+                        Too tired for searching songs?
+                    </h1>
+                </div>
+
+                <div class="videoWrapper">
+                    <img src="{% static 'images/p1.jpg' %}" class="img-fluid news-detail-image" alt=""/>
+                </div>
+
+                <div class="overlay"></div>
+            </section>
+
+            <nav class="navbar navbar-expand-lg bg-light shadow-lg">
+                <div class="container">
+                    <a class="navbar-brand" href="news-detail.html">
+                        <strong>Emotune</strong>
+                    </a>
+
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav mx-auto">
+                            <li class="nav-item active">
+                                <a class="nav-link" href="{% url 'signin' %}">Sign-in</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'signout' %}">Sign-up</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+
+            <section class="news-detail section-padding">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-8 col-10 mx-auto">
+                            <h2 class="mb-3" data-aos="fade-up">Too tired for searching songs?</h2>
+
+                            <p class="me-4" data-aos="fade-up">Music has the power to heal, to inspire, and to move us.Music is a universal language that connects us all.The beauty of music is that it can evoke a wide range of emotions in us. Our emotions are complex and ever-changing.With facial emotion detection, we can now unlock the full potential of this connection and recommend music that will truly touch our hearts.</p>
+
+                            <p data-aos="fade-up">No more sifting through irrelevant content, just the good stuff, curated for you.Content filtering and collaborative filtering algorithms are the future of content discovery. They help us find the needles in the haystack and create a more personalized experience for everyone. It's like having a virtual community of like-minded individuals who are always ready to share their favorite content with you.It's a way to connect with others who share your interests, and to discover content that speaks to you on a personal level.With these tools, we can discover new ideas, perspectives, and experiences that we might never have found otherwise.Content filtering allows us to sift through vast amounts of information and find the content that is most relevant to us. Collaborative filtering takes it a step further, by recommending content based on the preferences of others with similar tastes.</p>
+
+                            <div class="clearfix my-4 mt-lg-0 mt-5">
+                                <div class="col-md-6 float-md-end mb-3 ms-md-3" data-aos="fade-up">
+                                    <figure class="figure">
+                                        <img src="{% static 'images/p2.jpg' %}" class="img-fluid news-image" alt="">
+
+                                        
+                                    </figure>
+                                </div>
+
+                                  
+
+                                  <p data-aos="fade-up">
+                                    Emotions are complex and multifaceted, and music has the ability to tap into every one of them. It can help us explore our emotional landscape and deepen our understanding of ourselves
+                                  </p>
+
+                                  
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+            
+
+        </main>
+
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'js/jquery.sticky.js' %}"></script>
+    <script src="{% static 'js/aos.js' %}"></script>
+    <script src="{% static 'js/jquery.magnific-popup.min.js' %}"></script>
+    <script src="{% static 'js/magnific-popup-options.js' %}"></script>
+    <script src="{% static 'js/scrollspy.min.js' %}"></script>
+    <script src="{% static 'js/custom.js' %}"></script> 
+
+ {% endblock %}     

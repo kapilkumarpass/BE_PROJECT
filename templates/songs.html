@@ -1,62 +1,475 @@
 {% extends 'base.html' %}
 {%block content%}
+{% load static %}
+{% comment %} <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" integrity="sha512-fD9DI5bZwQxOi7MhYWnnNPlvXdp/2Pj3XSTRrFs5FQa4mizyGLnJcN6tuvUS6LbmgN1ut+XGSABKvjN0H6Aoow==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> {% endcomment %}
+
+{% comment %} <script src="https://kit.fontawesome.com/7c33dff1d8.js" crossorigin="anonymous"></script> {% endcomment %}
 <style>
-    .headeritem{
+    {% comment %} .headeritem{
         color:white;
     }
+    .music-player {
+      display: flex;
+      align-items: center;
+      height: 40px;
+      background-color: #f5f5f5;
+      border-radius: 20px;
+      padding: 5px;
+    }
+    
+    .play-pause-button {
+      width: 30px;
+      height: 30px;
+      border: none;
+      background-color: transparent;
+      font-size: 20px;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+    
+    .play-pause-button:hover {
+      color: #1db954;
+    }
+    
+    .progress-bar {
+      flex-grow: 1;
+      height: 5px;
+      background-color: #e5e5e5;
+      border-radius: 2.5px;
+      margin-right: 10px;
+    }
+    
+    .progress-bar-fill {
+      height: 100%;
+      background-color: #1db954;
+      border-radius: 2.5px;
+    } {% endcomment %}
+    
+    
+
+
+  *{
+      box-sizing:border-box;
+    }
+    :root{
+      --small: 35px;
+      --medium: 50px;
+      --large: 65px;
+      --bar-height:10px;
+    }
+    body{
+      font-family:sans-serif;
+      user-select:none;
+      padding:0;
+      margin:0;
+      {% comment %} background: rgb(149,1,193); {% endcomment %}
+      background: linear-gradient(159deg, rgb(98 42 115) 0%, rgba(227,129,102,1) 100%);
+    }
+    #overlay{
+      position:absolute;
+      top:0;
+      left:0;
+      bottom:0;
+      right:0;
+      z-index:9999;
+      display:none;
+    }
+    .container{
+      height:100vh;
+    }
+    .player{
+      border-radius: 20px;
+      width: 500px;
+      height: 350px;
+      position: absolute;
+      top:calc(50% - 175px);
+      left:calc(50% - 250px);
+      box-shadow:6px 6px 15px rgba(51,51,51,0.5);
+      overflow:hidden;
+      background:#fff;
+    }
+    .player #music-info{
+      padding: 15px;
+      {% comment %} background-image:url("https://www.bensound.com/bensound-img/evolution.jpg"); {% endcomment %}
+      height: 238px;
+      background-repeat:no-repeat;
+      background-size:100%;
+      color: #fff;
+    }
+    .player #music-info .title{
+      font-size: 23px;
+      margin-bottom: 8px;
+      z-index:1;
+    }
+    .player #music-info .bg{
+      width: 100%;
+      box-shadow: 0 -100px 100px 100px rgba(0,0,0,0.5);
+    }
+    .player #music-info .author{
+      font-size: 14px;
+      float: right;
+    }
+    .player #music-info .album{
+      font-size: 14px;
+    }
+    .player .timestamp{
+      position: absolute;
+      width: 100%;
+      bottom: 110px;
+    }
+    .player .timestamp #bar{
+      width: 100%;
+      height: var(--bar-height);
+      background: #bbb;
+    }
+    .player .timestamp #current-time{
+      position:absolute;
+      left: 0;
+      bottom: 0;
+      width: 0;
+      height: var(--bar-height);
+      background: #5453af;
+      pointer-events:none;
+    }
+    .player .timestamp #current-time:after{
+      content:"";
+      width: 10px;
+      height: 10px;
+      background: #5453af;
+      position: absolute;
+      right: -8px;
+      bottom: -4px;
+      z-index: 9;
+      border-radius: 50%;
+      box-shadow: 0 0 3px 2px #eee;
+    }
+    .player .buttons{
+      position: absolute;
+      bottom: 0px;
+      border-top: 1px solid #ddd;
+      width:100%;
+      height:110px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .player .buttons .button{
+      border: 1px solid #ddd;
+      border-radius: 50%;
+      text-align:center;
+      margin:7px;
+      color: #333;
+    }
+    .player .buttons .button-small{
+      width: var(--small);
+      height: var(--small);
+      line-height: var(--small);
+    }
+    .player .buttons .button-medium{
+      width: var(--medium);
+      height: var(--medium);
+      line-height: var(--medium);
+      font-size: 25px;
+    }
+    .player .buttons .button-large{
+      width: var(--large);
+      height: var(--large);
+      line-height: var(--large);
+      font-size: 35px;
+    }
+    .player .buttons .button-small:hover, .player .buttons .button-medium:hover, .player .buttons .button-large:hover{
+      background: #5453af;
+      color: #fff;
+    }
 </style>
-<nav class="navbar navbar-expand-sm navbar-light bg-dark">
-    <a class="navbar-brand" href="#" style="color:white">Navbar</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
+<nav class="navbar navbar-expand-sm navbar-light bg-dark" >
   
     <div class="collapse navbar-collapse mynav" id="navbarTogglerDemo02">
       <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
         <li class="nav-item">
-          <a class="nav-link headeritem" href="#" onclick="()=>{this.style.color = 'red';}" >Home</a>
+          <a class="nav-link headeritem" href="{% url 'userhome' %}" style="color:white;">Home</a>
          
         </li>
         <li class="nav-item" >
-          <a class="nav-link headeritem" href="{% url 'showuser' %}" >video</a>
+          <a class="nav-link headeritem" href="{% url 'showuser' %}" style="color:white;" >Video</a>
         </li>
         <li class="nav-item" >
-            <a class="nav-link headeritem" href="{% url 'signout' %}" >logout</a>
+            <a class="nav-link headeritem" href="{% url 'signout' %}" style="color:white;">Logout</a>
           </li>
-        {% comment %} <li class="nav-item">
-          <a class="nav-link disabled" href="#">Disabled</a>
-        </li>  {% endcomment %}
       </ul>
-      <form class="form-inline my-2 my-lg-0" style="display:flex; margin:3rem">
+      {% comment %} <form class="form-inline my-2 my-lg-0" style="display:flex; margin:3rem">
         <input class="form-control mr-sm-2" type="search" placeholder="Search">
         <button class="btn btn-outline-success my-2 my-sm-0 mx-2" type="submit">Search</button>
-      </form>
+      </form> {% endcomment %}
     </div>
   </nav>
+  
+  <div style="display:flex;align-items:center;">
+   
+  <table class="table" style="width:800px;color:white">
+    <thead>
+        <th><h3 style="color:white">{{emotion}} Songs</h3></th>
+    </thead>
+    
+    <tbody>
+      {% for song in songs_details %}
+      <tr>
+        <td class="songname">{{song.song_name}}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+ 
+  <div id="overlay"></div>
+  <div class="container" >
+    <div class="player" id="player" style="position:fixed;margin-left:250px">
+      <div id="music-info" style="padding:0px;position:relative;">
+        <img src="" id="song_image" style="position:absolute; width:500px;height:270px; top:-35px">
+      </div>
+      <div class="timestamp">
+        <div id="bar" style="height: 5px;
+        background-color: white;"></div>
+        <div id="current-time" style="height:5px">
+        </div>
+      </div>
+      <div class="buttons">
+        <div class="title" style="font-style: italic;position:absolute; top:0; margin-bottom:5px; text-align:center;color:black;"></div>
+        <br>
+        <div class="button button-small" id="like" style="margin-top:30px;color:red"><i class="fa fa-heart-o"></i></div>
+        <div class="button button-medium" id="previous" style="margin-top:30px"><i class="fa fa-step-backward"></i></div>
+        <div class="button button-large" id="play" style="margin-top:30px"><i class="fa fa-play"></i></div>
+        <div class="button button-medium" id="forward" style="margin-top:30px"><i class="fa fa-step-forward"></i></div>
+        {% comment %} <div class="button button-small" id="mute" style="margin-top:30px"><i class="fa fa-volume-up"></i></div> {% endcomment %}
+        <div><input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.5" style="margin-top:30px"></div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+<script>
+
+let a={{songs_details|safe}};
+let bar = document.getElementById("bar");
+let currentTime = document.getElementById("current-time");
+let currentAudio;
+let player = document.getElementById("player");
+let play = document.getElementById("play");
+let barPosition = player.offsetLeft;
+let overlay = document.getElementById("overlay");
+{% comment %} let mute = document.getElementById("mute"); {% endcomment %}
+let playing;
+let musicInfo = document.getElementById("music-info");
+let musicInfoChilds = [...musicInfo.children];
+var currentSongIndex = 0;
+let forward = document.getElementById("forward");
+let backward = document.getElementById("previous");
+let songname= document.getElementsByClassName("songname");
+let like=document.getElementById("like");
+const volumeSlider = document.getElementById('volumeSlider');
 
 
-    <table class="table" style="margin-top:20px">
-        <thead>
-          <tr>
-            
-            <th scope="col">song name</th>
-            <th scope="col">song url</th>
-            
-          </tr>
-        </thead>
-        <tbody>
-            {% for i in songs %}
-            {% comment %} {% print(type(i))%} {% endcomment %}
-             
-          <tr>
-            
-            <td>{{i.1}}</td>
-            <td><a href={{i.0}} style="color:green">{{i.0}}</a></td>
-            
-          </tr>
-          {% endfor %}
-          
-        </tbody>
-      </table>
 
+function loadAudio(audio){
+  audio = audio || 0;
+  console.log(currentAudio);
+  if(currentAudio){
+    currentAudio.pause();
+    currentAudio.currentTime = 0;
+  }
+  let song_id=a[audio]["song_id"];
+  try {
+    checkLiked(song_id);
+  } catch (error) {
+    console.error(error);
+  }
+  let imag=document.getElementById("song_image");
+  imag.src=a[audio]["song_image"];
+  let title=document.getElementsByClassName("title");
+  title[0].innerHTML=a[audio]["song_name"];
+  currentAudio = new Audio("/home/api/audio/"+song_id);
+
+}
+
+function pixelPerSecond(){  
+  return Number(window.getComputedStyle(bar).getPropertyValue("width").replace("px", "")) / currentAudio.duration;
+}
+
+function currentTimeUpdate(){
+  if(!window.grabbing){
+    currentTime.style.width = (currentAudio.currentTime * pixelPerSecond()) + "px";
+  }
+}
+
+function currentGrabTimeUpdate(event){
+  let eventPageX = event.pageX || event.touches[0].pageX;
+
+  if((eventPageX - barPosition) > Number(window.getComputedStyle(bar).getPropertyValue("width").replace("px",""))){
+    currentTime.style.width = window.getComputedStyle(bar).getPropertyValue("width");
+  }else if((eventPageX - barPosition) < 0){
+    currentTime.style.width = 0;
+  }else{
+    currentTime.style.width = (eventPageX - barPosition) + "px";
+  }
+}
+
+function barStart(event){
+  if(event.target == bar){
+    let eventPageX = event.pageX || event.touches[0].pageX;
+    window.grabbing = true;
+    
+    currentTime.style.width = (eventPageX - barPosition) + "px";
+    overlay.style.display = "block";
+    
+    if(event.type == 'touchstart'){
+      window.addEventListener("touchmove", currentGrabTimeUpdate);
+    }else{
+      window.addEventListener("mousemove", currentGrabTimeUpdate);
+    }
+    currentAudio.muted = true;
+  }
+}
+
+function barEnd(event){
+  if(window.grabbing === true){
+    window.grabbing = false;
+    currentAudio.muted = false;
+    currentAudio.currentTime = Number(currentTime.style.width.replace("px","")) / pixelPerSecond();
+    overlay.style.display = "none";
+    
+    if(event.type == 'touchstart'){
+      window.removeEventListener("touchmove", currentGrabTimeUpdate);
+    }else{
+      window.removeEventListener("mousemove", currentGrabTimeUpdate);
+    }
+  }
+}
+
+play.addEventListener("click", function(){
+  if(currentAudio.paused){
+    play.innerHTML = '<i class="fa fa-pause"></i>';
+    currentAudio.play();
+  }else{
+    play.innerHTML = '<i class="fa fa-play"></i>';
+    currentAudio.pause();
+  }
+});
+
+{% comment %} mute.addEventListener("click", function(){
+  if(!currentAudio.muted){
+    this.innerHTML = '<i class="fa fa-volume-mute"></i>';
+    currentAudio.muted = true;
+  }else{
+    this.innerHTML = '<i class="fa fa-volume-up"></i>';
+    currentAudio.muted = false;
+  }
+}) {% endcomment %}
+
+window.addEventListener("mousedown", barStart);
+window.addEventListener("mouseup", barEnd);
+
+window.addEventListener("touchstart", barStart);
+window.addEventListener("touchend", barEnd);
+
+(function load(){
+  playing = setInterval(currentTimeUpdate, 1);
+  loadAudio()
+})();
+
+currentAudio.addEventListener("ended", function(){
+  play.innerHTML = '<i class="fa fa-play"></i>';
+});
+
+
+const next = () => {
+  currentSongIndex++;
+  if (currentSongIndex >= a.length) {
+    currentSongIndex = 0;
+  }
+  loadAudio(currentSongIndex);
+  if(currentAudio.paused){
+    play.innerHTML = '<i class="fa fa-pause"></i>';
+    currentAudio.play();
+  }else{
+    play.innerHTML = '<i class="fa fa-play"></i>';
+    currentAudio.pause();
+  }
+
+};
+
+forward.addEventListener('click',next);
+
+const previous = () => {
+  currentSongIndex--;
+  if (currentSongIndex < 0) {
+    currentSongIndex = a.length-1;
+  }
+  loadAudio(currentSongIndex);
+  if(currentAudio.paused){
+    play.innerHTML = '<i class="fa fa-pause"></i>';
+    currentAudio.play();
+  }else{
+    play.innerHTML = '<i class="fa fa-play"></i>';
+    currentAudio.pause();
+  }
+};
+backward.addEventListener('click',previous);
+
+for(let i=0;i<a.length;i++)
+{
+  songname[i].addEventListener('click',()=>{
+    currentSongIndex=i;
+    let song_id=a[currentSongIndex]["song_id"]
+    try {
+      checkLiked(song_id);
+    } catch (error) {
+      console.error(error);
+    }
+    loadAudio(i);
+    if(currentAudio.paused){
+      play.innerHTML = '<i class="fa fa-pause"></i>';
+      currentAudio.play();
+    }else{
+      play.innerHTML = '<i class="fa fa-play"></i>';
+      currentAudio.pause();
+    }
+
+  })
+}
+
+like.addEventListener('click', async() => {
+  let song_id=a[currentSongIndex]["song_id"]
+  const response = await fetch(`/home/likesong/${song_id}/`);
+  const data = await response.json();
+  if (data["message"]) {
+    console.log("song is liked")
+    like.querySelector('i').classList.add('fa-heart');
+    like.querySelector('i').classList.remove('fa-heart-o');
+    like.querySelector('i').style.color = 'red';  
+  } else {
+    like.querySelector('i').classList.add('fa-heart-o');
+    like.querySelector('i').classList.remove('fa-heart');
+    //like.querySelector('i').style.color = 'black'; 
+  }
+});
+
+async function checkLiked(song_id){
+  const response = await fetch(`/home/issongliked/${song_id}/`);
+  const data = await response.json();
+  if (data) {
+    like.querySelector('i').classList.add('fa-heart');
+    like.querySelector('i').classList.remove('fa-heart-o');
+    like.querySelector('i').style.color = 'red';
+    
+  } else {
+    like.querySelector('i').classList.add('fa-heart-o');
+    like.querySelector('i').classList.remove('fa-heart');
+    //like.querySelector('i').style.color = 'black';  
+  }
+}
+volumeSlider.addEventListener('input', function() {
+  currentAudio.volume = volumeSlider.value;
+});
+
+</script>
 {% endblock  %}

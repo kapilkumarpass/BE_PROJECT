@@ -1,62 +1,656 @@
 {% extends 'base.html'%}
 {% block content %}
+{% comment %} <script src="https://kit.fontawesome.com/7c33dff1d8.js" crossorigin="anonymous"></script> {% endcomment %}
+{% comment %} <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script> {% endcomment %}
 <style>
     .headeritem{
         color:white;
     }
+    *{
+      box-sizing:border-box;
+    }
+    :root{
+      --small: 35px;
+      --medium: 50px;
+      --large: 65px;
+      --bar-height:10px;
+    }
+    body{
+      font-family:sans-serif;
+      user-select:none;
+      padding:0;
+      margin:0;
+      {% comment %} background: rgb(149,1,193); {% endcomment %}
+      background: linear-gradient(159deg, rgb(98 42 115) 0%, rgba(227,129,102,1) 100%);
+    }
+    #overlay{
+      position:absolute;
+      top:0;
+      left:0;
+      bottom:0;
+      right:0;
+      z-index:9999;
+      display:none;
+    }
+     .container{
+      height:100vh;
+    } 
+    .player{
+      {% comment %} border-radius: 20px; {% endcomment %}
+      {% comment %} width: 500px; {% endcomment %}
+      height: 105px;
+      {% comment %} position: absolute; {% endcomment %}
+      {% comment %} top:calc(50% - 175px);
+      left:calc(50% - 250px); {% endcomment %}
+      box-shadow:6px 6px 15px rgba(51,51,51,0.5);
+      overflow:hidden;
+      background:#fff;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100vw;
+      {% comment %} height: 50px; {% endcomment %}
+      {% comment %} background: linear-gradient(to bottom, #c2b9ff, #FFA07A, #5b47ff); {% endcomment %}
+      background: linear-gradient(to bottom, #643434, #FFA07A, #643434); 
+      color: #fff;
+      text-align: center;
+      padding-top: 15px;
+    }
+    .player #music-info{
+      padding: 15px;
+      {% comment %} background-image:url("https://www.bensound.com/bensound-img/evolution.jpg"); {% endcomment %}
+      height: 238px;
+      background-repeat:no-repeat;
+      background-size:100%;
+      color: #fff;
+    }
+    .player #music-info .title{
+      font-size: 23px;
+      margin-bottom: 8px;
+      z-index:1;
+    }
+    .player #music-info .bg{
+      width: 100%;
+      box-shadow: 0 -100px 100px 100px rgba(0,0,0,0.5);
+    }
+    .player #music-info .author{
+      font-size: 14px;
+      float: right;
+    }
+    .player #music-info .album{
+      font-size: 14px;
+    }
+    .player .timestamp{
+      position: absolute;
+      width: 100%;
+      bottom: 100px;
+    }
+    .player .timestamp #bar{
+      width: 100%;
+      height: var(--bar-height);
+      background: #bbb;
+    }
+    .player .timestamp #current-time{
+      position:absolute;
+      left: 0;
+      bottom: 0;
+      width: 0;
+      height: var(--bar-height);
+      background: #5453af;
+      pointer-events:none;
+    }
+    .player .timestamp #current-time:after{
+      content:"";
+      width: 10px;
+      height: 10px;
+      background: #5453af;
+      position: absolute;
+      right: -8px;
+      bottom: -4px;
+      z-index: 9;
+      border-radius: 50%;
+      box-shadow: 0 0 3px 2px #eee;
+    }
+    .player .buttons{
+      position: absolute;
+      bottom: 0px;
+      border-top: 1px solid #ddd;
+      width:100%;
+      height:105px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .player .buttons .button{
+      border: 1px solid #ddd;
+      border-radius: 50%;
+      text-align:center;
+      margin:7px;
+      color: #333;
+    }
+    .player .buttons .button-small{
+      width: var(--small);
+      height: var(--small);
+      line-height: var(--small);
+    }
+    .player .buttons .button-medium{
+      width: var(--medium);
+      height: var(--medium);
+      line-height: var(--medium);
+      font-size: 25px;
+    }
+    .player .buttons .button-large{
+      width: var(--large);
+      height: var(--large);
+      line-height: var(--large);
+      font-size: 35px;
+    }
+    .player .buttons .button-small:hover, .player .buttons .button-medium:hover, .player .buttons .button-large:hover{
+      background: #5453af;
+      color: #fff;
+    }
+    ::-webkit-scrollbar {
+      display: none;
+    }
+    .popsongimage {
+      display: block;
+      transition: transform 0.2s ease-in-out;
+      cursor:pointer
+    }
+    
+    .popsong:hover .popsongimage {
+      transform: scale(1.1);
+    }
+    .likesongimage {
+      display: block;
+      transition: transform 0.2s ease-in-out;
+      cursor:pointer
+    }
+    
+    .likesong:hover .likesongimage {
+      transform: scale(1.1);
+    }
+    .pastsongimage {
+      display: block;
+      transition: transform 0.2s ease-in-out;
+      cursor:pointer
+    }
+    
+    .pastsong:hover .pastsongimage {
+      transform: scale(1.1);
+    }
+
 </style>
-<nav class="navbar navbar-expand-sm navbar-light bg-dark">
-    <a class="navbar-brand" href="#" style="color:white">Navbar</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
+<nav class="navbar navbar-expand navbar-light bg-dark wrapper" style="position:fixed;width:100vw">
   
-    <div class="collapse navbar-collapse mynav" id="navbarTogglerDemo02">
+    <div class="collapse navbar-collapse mynav " id="navbarTogglerDemo02" >
       <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
         <li class="nav-item">
-          <a class="nav-link headeritem" href="#" onclick="()=>{this.style.color = 'red';}" >Home</a>
+          <a class="nav-link headeritem" href="{% url 'userhome'%}"  >Home</a>
          
         </li>
         <li class="nav-item" >
-          <a class="nav-link headeritem" href="{% url 'showuser' %}" >video</a>
+          <a class="nav-link headeritem" href="{% url 'showuser' %}" >Video</a>
         </li>
         <li class="nav-item" >
-          <a class="nav-link headeritem" href="{% url 'signout' %}" >logout</a>
+          <a class="nav-link headeritem" href="{% url 'signout' %}" >Logout</a>
         </li>
-        {% comment %} <li class="nav-item">
-          <a class="nav-link disabled" href="#">Disabled</a>
-        </li>  {% endcomment %}
       </ul>
-      <form class="form-inline my-2 my-lg-0" style="display:flex; margin:3rem">
+      {% comment %} <form class="form-inline my-2 my-lg-0" style="display:flex; margin:3rem">
         <input class="form-control mr-sm-2" type="search" placeholder="Search">
         <button class="btn btn-outline-success my-2 my-sm-0 mx-2" type="submit">Search</button>
-      </form>
+      </form> {% endcomment %}
     </div>
   </nav>
-  <h3>past listen songs</h3>
-  <table class="table" style="margin-top:20px">
-    <thead>
-      <tr>
-        
-        <th scope="col">song name</th>
-        <th scope="col">song url</th>
-        
-      </tr>
-    </thead>
-    <tbody>
-        {% for i in songs %}
-        {% comment %} {% print(type(i))%} {% endcomment %}
-         
-      <tr>
-        
-        <td>{{i.1}}</td>
-        <td><a href={{i.0}} style="color:green">{{i.0}}</a></td>
-        
-      </tr>
-      {% endfor %}
-      
-    </tbody>
-  </table>
+  <br>
+  
+<div style="margin-top:20px; color:white; 
+  overflow: scroll;
+    -webkit-overflow-scrolling: touch;
+  bottom:110px;
+  height: 440px">
+  
+  <div>
+    <h3 style="margin-top:3rem;margin-left:1rem">Most Popular Songs</h3>
+   
+  <div style="display:flex;justify-item:center;align-item:center;flex-wrap: wrap; margin:auto 0; width:calc((((100vw*100/100)/100)-1)*100)">
+    {% for popsong in popular_songs %}
 
+      <div class="popsong" style="margin-right:1rem;margin-left:1rem" data-song="{{popsong.song_id}}">
+        <img class="popsongimage" src="{{popsong.song_image}}" style="width:100px;height:100px"/>
+        <p class="popsongname"  style="width:100px;overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 100px;">{{popsong.song_name}}</p>
+      </div>
+
+    {% endfor %}
+  </div>
+  </div>
+
+  <div>
+    <h3 style="margin-top:3rem;margin-left:1rem">Past Listened Songs</h3>
+   
+  <div style="display:flex;justify-item:center;align-item:center;flex-wrap: wrap; margin:auto 0; width:calc((((100vw*100/100)/100)-1)*100)">
+    {% for pastsong in past_listen_songs %}
+
+      <div class="pastsong" style="margin-right:1rem;margin-left:1rem" data-song="{{pastsong.song_id}}">
+        <img class="pastsongimage" src="{{pastsong.song_image}}" style="width:100px;height:100px"/>
+        <p class="pastsongname"  style="width:100px;overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 100px;">{{pastsong.song_name}}</p>
+      </div>
+
+    {% endfor %}
+  </div>
+  </div>
+
+  <div>
+    <h3 style="margin-top:3rem;margin-left:1rem">Liked Songs</h3>
+   
+  <div style="display:flex;justify-item:center;align-item:center;flex-wrap: wrap; margin:auto 0; width:calc((((100vw*100/100)/100)-1)*100)">
+    {% for likesong in liked_songs %}
+
+      <div class="likesong" style="margin-right:1rem;margin-left:1rem" data-song="{{likesong.song_id}}">
+        <img class="likesongimage" src="{{likesong.song_image}}" style="width:100px;height:100px"/>
+        <p class="likesongname"  style="width:100px;overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 100px;">{{likesong.song_name}}</p>
+      </div>
+
+    {% endfor %}
+  </div>
+  </div>
+
+  <div>
+    <h3 style="margin-top:3rem;margin-left:1rem">Liked by others</h3>
+   
+  <div style="display:flex;justify-item:center;align-item:center;flex-wrap: wrap; margin:auto 0; width:calc((((100vw*100/100)/100)-1)*100)">
+    {% for othersong in other_users_songs %}
+
+      <div class="likeothersong" style="margin-right:1rem;margin-left:1rem" data-song="{{othersong.song_id}}">
+        <img class="likeothersongimage" src="{{othersong.song_image}}" style="width:100px;height:100px"/>
+        <p class="likeothersongname"  style="width:100px;overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 100px;">{{othersong.song_name}}</p>
+      </div>
+
+    {% endfor %}
+  </div>
+  </div>
+</div>
+
+
+<div id="overlay"></div>
+
+<div class="player" id="player">
+  
+  <div class="buttons">
+    <div class="timestamp">
+      <div id="bar" style="height: 5px;
+      background-color: white;"></div>
+      <div id="current-time" style="height:5px">
+      </div>
+    </div>
+    <div class="title" style="font-style: italic;position:absolute; top:0; margin-bottom:5px; text-align:center;color:black;"></div>
+    <br>
+    <p class="currentsongplaying" style=" justify-content: flex-start; position:absolute;color:black;
+    left:5px;top:15px;font-style: italic;">flwers</p>
+ 
+    <div class="button button-small" id="like" style="margin-top:30px;color:red">
+      <i class="fa fa-heart-o"></i>
+    </div>
+    <div class="button button-medium" id="previous" style="margin-top:30px"><i class="fa fa-step-backward"></i></div>
+    <div class="button button-large" id="play" style="margin-top:30px"><i class="fa fa-play"></i></div>
+    <div class="button button-medium" id="forward" style="margin-top:30px"><i class="fa fa-step-forward"></i></div>
+    {% comment %} <div class="button button-small" id="mute" style="margin-top:30px"><i class="fa fa-volume-up"></i></div> {% endcomment %}
+    <div><input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.5" style="margin-top:30px"></div>
+    <p class="currentsongartist" style=" justify-content: flex-end; position:absolute;color:black;
+    right:5px;top:15px;font-style: italic;">flwers</p>
+  </div>
+</div>
+
+
+
+
+
+<script>
+let song_list={{popular_songs|safe}};
+let popularsongs={{popular_songs|safe}};
+let likedsongs={{liked_songs|safe}};
+let pastlistensongs={{past_listen_songs|safe}};
+let othersongs={{other_users_songs|safe}};
+
+
+let bar = document.getElementById("bar");
+let currentTime = document.getElementById("current-time");
+let currentAudio=new Audio("#")
+let player = document.getElementById("player");
+let play = document.getElementById("play");
+let barPosition = player.offsetLeft;
+let overlay = document.getElementById("overlay");
+{% comment %} let mute = document.getElementById("mute"); {% endcomment %}
+let playing;
+
+var currentSongIndex = 0;
+let forward = document.getElementById("forward");
+let backward = document.getElementById("previous");
+let popsong=document.getElementsByClassName("popsong");
+let likesong=document.getElementsByClassName("likesong");
+let pastsong=document.getElementsByClassName("pastsong")
+let othersong=document.getElementsByClassName("likeothersong")
+let like=document.getElementById("like");
+const volumeSlider = document.getElementById('volumeSlider');
+
+function loadAudio(audio){
+  audio = audio || 0;
+  if(currentAudio.src){
+    currentAudio.pause();
+    currentAudio.currentTime = 0;
+  }
+  let song_id=song_list[audio]["song_id"];
+  try {
+    checkLiked(song_id);
+  } catch (error) {
+    console.error(error);
+  }
+  document.getElementsByClassName("currentsongplaying")[0].textContent=song_list[audio]["song_name"];
+  document.getElementsByClassName("currentsongartist")[0].textContent="-by "+song_list[audio]["artists_name"][0];
+  currentAudio.src="/home/api/audio/"+song_id;
+
+}
+
+function pixelPerSecond(){
+  return Number(window.getComputedStyle(bar).getPropertyValue("width").replace("px", "")) / currentAudio.duration;
+}
+
+function currentTimeUpdate(){
+  if(!window.grabbing){
+    currentTime.style.width = (currentAudio.currentTime * pixelPerSecond()) + "px";
+  }
+}
+
+function currentGrabTimeUpdate(event){
+  let eventPageX = event.pageX || event.touches[0].pageX;
+
+  if((eventPageX - barPosition) > Number(window.getComputedStyle(bar).getPropertyValue("width").replace("px",""))){
+    currentTime.style.width = window.getComputedStyle(bar).getPropertyValue("width");
+  }else if((eventPageX - barPosition) < 0){
+    currentTime.style.width = 0;
+  }else{
+    currentTime.style.width = (eventPageX - barPosition) + "px";
+  }
+}
+
+function barStart(event){
+  if(event.target == bar){
+    let eventPageX = event.pageX || event.touches[0].pageX;
+    window.grabbing = true;
+    
+    currentTime.style.width = (eventPageX - barPosition) + "px";
+    overlay.style.display = "block";
+    
+    if(event.type == 'touchstart'){
+      window.addEventListener("touchmove", currentGrabTimeUpdate);
+    }else{
+      window.addEventListener("mousemove", currentGrabTimeUpdate);
+    }
+    currentAudio.muted = true;
+  }
+}
+
+function barEnd(event){
+  if(window.grabbing === true){
+    window.grabbing = false;
+    currentAudio.muted = false;
+    currentAudio.currentTime = Number(currentTime.style.width.replace("px","")) / pixelPerSecond();
+    overlay.style.display = "none";
+    
+    if(event.type == 'touchstart'){
+      window.removeEventListener("touchmove", currentGrabTimeUpdate);
+    }else{
+      window.removeEventListener("mousemove", currentGrabTimeUpdate);
+    }
+  }
+}
+
+play.addEventListener("click", function(){
+  if(currentAudio.paused){
+    play.innerHTML = '<i class="fa fa-pause"></i>';
+    currentAudio.play();
+  }else{
+    play.innerHTML = '<i class="fa fa-play"></i>';
+    currentAudio.pause();
+  }
+});
+{% comment %} 
+mute.addEventListener("click", function(){
+  if(!currentAudio.muted){
+    this.innerHTML = '<i class="fa fa-volume-mute"></i>';
+    currentAudio.muted = true;
+  }else{
+    this.innerHTML = '<i class="fa fa-volume-up"></i>';
+    currentAudio.muted = false;
+  }
+}) {% endcomment %}
+
+window.addEventListener("mousedown", barStart);
+window.addEventListener("mouseup", barEnd);
+
+window.addEventListener("touchstart", barStart);
+window.addEventListener("touchend", barEnd);
+
+(function load(){
+  playing = setInterval(currentTimeUpdate, 1);
+  loadAudio()
+})();
+
+async function createPastListen(){
+  let song_id=song_list[currentSongIndex]["song_id"];
+  const response = await fetch(`/home/listenedSong/${song_id}/`);
+    const data = await response.json();
+    console.log(data);
+}
+
+currentAudio.addEventListener("ended", function(){
+  play.innerHTML = '<i class="fa fa-play"></i>';
+  try{
+    console.log(currentSongIndex);
+    createPastListen();
+  }
+  catch(err)
+  {
+    console.log(err)
+  }
+});
+
+
+const next = () => {
+  currentSongIndex++;
+  if (currentSongIndex >= song_list.length) {
+    currentSongIndex = 0;
+  }
+  loadAudio(currentSongIndex);
+  if(currentAudio.paused){
+    play.innerHTML = '<i class="fa fa-pause"></i>';
+    currentAudio.play();
+  }else{
+    play.innerHTML = '<i class="fa fa-play"></i>';
+    currentAudio.pause();
+  }
+
+};
+
+forward.addEventListener('click',next);
+
+const previous = () => {
+  currentSongIndex--;
+  if (currentSongIndex < 0) {
+    currentSongIndex = song_list.length-1;
+  }
+  loadAudio(currentSongIndex);
+  if(currentAudio.paused){
+    play.innerHTML = '<i class="fa fa-pause"></i>';
+    currentAudio.play();
+  }else{
+    play.innerHTML = '<i class="fa fa-play"></i>';
+    currentAudio.pause();
+  }
+};
+backward.addEventListener('click',previous);
+
+for(let i=0;i<song_list.length;i++){
+  popsong[i].addEventListener('click',()=>{
+    song_list=popularsongs;
+    currentSongIndex=i;
+    let songgoingtoplay=document.getElementsByClassName("popsongname")[i].textContent;
+    let song_id=song_list[i]["song_id"]
+    try {
+      checkLiked(song_id);
+    } catch (error) {
+      console.error(error);
+    }
+    document.getElementsByClassName("currentsongplaying")[0].textContent=songgoingtoplay;
+    document.getElementsByClassName("currentsongartist")[0].textContent="-by "+song_list[i]["artists_name"][0];
+    if(currentAudio.paused){
+      play.innerHTML = '<i class="fa fa-pause"></i>';
+      currentAudio.play();
+    }
+    else{
+      play.innerHTML = '<i class="fa fa-play"></i>';
+      currentAudio.pause();
+    }
+    currentAudio.src="/home/api/audio/"+song_id;
+    currentAudio.play();
+    play.innerHTML = '<i class="fa fa-pause"></i>';
+    currentSongIndex=i;
+  });
+}
+
+
+for(let i=0;i<pastlistensongs.length;i++){
+  pastsong[i].addEventListener('click',()=>{
+    song_list=pastlistensongs;
+    currentSongIndex=i;
+    let songgoingtoplay=document.getElementsByClassName("pastsongname")[i].textContent;
+    let song_id=song_list[i]["song_id"]
+    try {
+      checkLiked(song_id);
+    } catch (error) {
+      console.error(error);
+    }
+    document.getElementsByClassName("currentsongplaying")[0].textContent=songgoingtoplay;
+    document.getElementsByClassName("currentsongartist")[0].textContent="-by "+song_list[i]["artists_name"][0];
+    if(currentAudio.paused){
+      play.innerHTML = '<i class="fa fa-pause"></i>';
+      currentAudio.play();
+    }
+    else{
+      play.innerHTML = '<i class="fa fa-play"></i>';
+      currentAudio.pause();
+    }
+    currentAudio.src="/home/api/audio/"+song_id;
+    currentAudio.play();
+    play.innerHTML = '<i class="fa fa-pause"></i>';
+    currentSongIndex=i;
+  });
+}
+
+
+for(let i=0;i<likedsongs.length;i++){
+  likesong[i].addEventListener('click',()=>{
+    song_list=likedsongs;
+    currentSongIndex=i;
+    let songgoingtoplay=document.getElementsByClassName("likesongname")[i].textContent;
+    let song_id=song_list[i]["song_id"]
+    try {
+      checkLiked(song_id);
+    } catch (error) {
+      console.error(error);
+    }
+    document.getElementsByClassName("currentsongplaying")[0].textContent=songgoingtoplay;
+    document.getElementsByClassName("currentsongartist")[0].textContent="-by "+song_list[i]["artists_name"][0];
+    if(currentAudio.paused){
+      play.innerHTML = '<i class="fa fa-pause"></i>';
+      currentAudio.play();
+    }
+    else{
+      play.innerHTML = '<i class="fa fa-play"></i>';
+      currentAudio.pause();
+    }
+    currentAudio.src="/home/api/audio/"+song_id;
+    currentAudio.play();
+    play.innerHTML = '<i class="fa fa-pause"></i>';
+    currentSongIndex=i;
+  });
+}
+
+for(let i=0;i<othersongs.length;i++){
+  othersong[i].addEventListener('click',()=>{
+    song_list=othersongs;
+    currentSongIndex=i;
+    let songgoingtoplay=document.getElementsByClassName("likeothersongname")[i].textContent;
+    let song_id=song_list[i]["song_id"]
+    try {
+      checkLiked(song_id);
+    } catch (error) {
+      console.error(error);
+    }
+    document.getElementsByClassName("currentsongplaying")[0].textContent=songgoingtoplay;
+    document.getElementsByClassName("currentsongartist")[0].textContent="-by "+song_list[i]["artists_name"][0];
+    if(currentAudio.paused){
+      play.innerHTML = '<i class="fa fa-pause"></i>';
+      currentAudio.play();
+    }
+    else{
+      play.innerHTML = '<i class="fa fa-play"></i>';
+      currentAudio.pause();
+    }
+    currentAudio.src="/home/api/audio/"+song_id;
+    currentAudio.play();
+    play.innerHTML = '<i class="fa fa-pause"></i>';
+    currentSongIndex=i;
+  });
+}
+
+like.addEventListener('click', async() => {
+    let song_id=song_list[currentSongIndex]["song_id"]
+    const response = await fetch(`/home/likesong/${song_id}/`);
+    const data = await response.json();
+    if (data["message"]) {
+      console.log("song is liked")
+      like.querySelector('i').classList.add('fa-heart');
+      like.querySelector('i').classList.remove('fa-heart-o');
+      like.querySelector('i').style.color = 'red';  
+    } else {
+      like.querySelector('i').classList.add('fa-heart-o');
+      like.querySelector('i').classList.remove('fa-heart');
+      //like.querySelector('i').style.color = 'black'; 
+    }
+  });
+
+async function checkLiked(song_id){
+    const response = await fetch(`/home/issongliked/${song_id}/`);
+    const data = await response.json();
+    if (data) {
+      like.querySelector('i').classList.add('fa-heart');
+      like.querySelector('i').classList.remove('fa-heart-o');
+      like.querySelector('i').style.color = 'red';
+      
+    } else {
+      like.querySelector('i').classList.add('fa-heart-o');
+      like.querySelector('i').classList.remove('fa-heart');
+      //like.querySelector('i').style.color = 'black';  
+    }
+}
+
+volumeSlider.addEventListener('input', function() {
+    currentAudio.volume = volumeSlider.value;
+  });
+
+</script>
   
 {% endblock %}

@@ -1,3 +1,15 @@
+body::before{
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background-color: #000;
+  opacity: 0.5;
+  z-index: -1;
+}
+
 .LockOn {
     display: block;
     visibility: visible;
@@ -16,7 +28,7 @@
     color:blue;
     font-style:italic;
     font-weight:400;
-    background-image: url("/images/Loading_icon.gif");
+    /* background-image: url("/static/images/SL-123119-26540-43.jpg"); */
     background-repeat: no-repeat;
     background-attachment: fixed;
     background-position: center;
@@ -60,3 +72,8 @@
     background-color: hsla(0, 0%, 100%, 0.9) !important;
     backdrop-filter: saturate(200%) blur(25px);
   }
+
+
+
+
+  

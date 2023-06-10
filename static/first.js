@@ -1,21 +1,21 @@
 $(window).on('load', function () {
-    let videoclosebtn=document.createElement("button");
-    var para = document.createTextNode('video off');
-    videoclosebtn.appendChild(para);
-    videoclosebtn.style.display='block'
-    videoclosebtn.style.margin='1rem auto'
-    videoclosebtn.type = 'submit';
-    // videoclosebtn.style.backgroundColor='blue'
-    // videoclosebtn.classList.add("btn btn-primary");
-    videoclosebtn.classList.add('btn');
-    videoclosebtn.classList.add('btn-primary');
+    // let videoclosebtn=document.createElement("button");
+    // var para = document.createTextNode('video off');
+    // videoclosebtn.appendChild(para);
+    // videoclosebtn.style.display='block'
+    // videoclosebtn.style.margin='1rem auto'
+    // videoclosebtn.type = 'submit';
+    // // videoclosebtn.style.backgroundColor='blue'
+    // // videoclosebtn.classList.add("btn btn-primary");
+    // videoclosebtn.classList.add('btn');
+    // videoclosebtn.classList.add('btn-primary');
     // document.getElementsByTagName('body')[0].appendChild(videoclosebtn);
     // videoclosebtn.addEventListener('click',video_off)
     video_off();
   $("#coverScreen").hide();
   });
 window.onbeforeunload=()=>{
-  fetch('http://localhost:8000/home/end_streaming').then(res=>res.json()).then(res=>{})
+ 
 }
 // $(document).ready( function() {
 
@@ -44,9 +44,14 @@ window.onbeforeunload=()=>{
 // }
 function video_off() {
  setTimeout(()=>{
-  console.log("video closed")
+  // console.log("video closed")
   document.getElementById("demo").src = "";
-  window.location.replace("http://localhost:8000/home/get_songs");
+  // window.location.replace("http://localhost:8000/home/get_songs");
+  fetch('http://localhost:8000/home/end_streaming').then(res=>res.text()).then(res=>{
+    document.open();
+    document.write(res);
+    document.close();
+  })
   },5000)
   
   // document.getElementById("wait").innerHTML = "Turned off";

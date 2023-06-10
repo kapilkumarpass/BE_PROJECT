@@ -4,7 +4,6 @@ import numpy as np
 import cv2
 from keras.models import load_model
 from tensorflow.keras.models import model_from_json
-from temp.models import Musician
 import time
 from django.db import connections
 import cv2
@@ -16,7 +15,8 @@ class VideoCamera(object):
         self.video = cv2.VideoCapture(0)
         haarcascade = "C:\\Users\\kapil\\OneDrive\\Desktop\\be_project\\backend\\temp\\haarcascade_frontalface_default.xml"
         self.font = cv2.FONT_HERSHEY_PLAIN
-        self.emotion_arr = ['Anger','Happy','Neutral','Sad']
+        self.emotion_arr = ['Angry','Happy','Neutral','Sad']
+        # self.emotion_arr = ['Angry','Angry','Angry','Angry']
         print("+" * 50, "loading model")
         json_file = open('C:\\Users\\kapil\\OneDrive\\Desktop\\be_project\\backend\\temp\\emotion_model.json', "r")
         loaded_model_json = json_file.read()
